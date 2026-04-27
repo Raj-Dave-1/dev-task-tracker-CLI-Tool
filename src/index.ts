@@ -1,27 +1,79 @@
 import figlet from "figlet";
 import chalkAnimation from "chalk-animation";
+import fs from "fs";
 
 const args = process.argv.slice(2);
-
 const command = args[0];
+const taskFile = "tasks.json";
+type TaskStatus = "todo" | "in-progress" | "done";
+
+interface Task {
+  id: number;
+  description: string;
+  status: TaskStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const buildTask = (
+  task: string,
+  totalTasks: number,
+): Omit<Task, "updatedAt"> => {
+  return {
+    id: totalTasks + 1,
+    description: task,
+    status: "todo",
+    createdAt: new Date(),
+  };
+};
 
 switch (command) {
   case undefined:
-    figlet("Welcome !!", (err, data) => {
-      if (err || !data) return console.log(err ?? "Something went wrong");
-      const rainbow = chalkAnimation.rainbow(data);
-      // The animation starts automatically
-      setTimeout(() => rainbow.stop(), 5000); // Stop after 5 seconds
-    });
+    const welcomeMsg = await figlet("Welcome !!");
+    const rainbow = chalkAnimation.rainbow(welcomeMsg);
+    setTimeout(() => rainbow.stop(), 5000); // Stop after 5 seconds
 
     break;
 
   case "add":
     const task = args[1];
-    console.log("I'll add task: ", task);
+    if (!task) {
+      // console.log("Task is required");
+      const errorMsg = chalkAnimation.rainbow("Task is required");
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      errorMsg.stop();
+      process.exit(1); // we don't want to continue if task is not provided, and exit 1 indicates an error
+    }
+    let listOfTask: Task[] = [];
+    if (fs.existsSync(taskFile)) {
+      listOfTask = JSON.parse(fs.readFileSync(taskFile, "utf8"));
+    }
+    const newTask = buildTask(task, listOfTask.length);
+
+    listOfTask.push({ ...newTask, updatedAt: newTask.createdAt });
+    fs.writeFileSync(taskFile, JSON.stringify(listOfTask, null, 2));
+
+    console.log(`Task added successfully (ID: ${newTask.id})`);
     break;
   case "list":
-    console.log("I'll list all tasks");
+    const statusFilters = args.slice(1);
+    const allTasks: Task[] = JSON.parse(fs.readFileSync(taskFile, "utf8"));
+
+    let filteredTasks: Task[] = [];
+    if (statusFilters.length > 0) {
+      filteredTasks = allTasks.filter((task: Task) =>
+        statusFilters.includes(task.status),
+      );
+    } else {
+      filteredTasks = allTasks;
+    }
+
+    filteredTasks.map((task: Task) =>
+      console.log(
+        `${task.id}. ${task.description}` +
+          `${statusFilters.length > 0 ? ` (${task.status})` : ""}`,
+      ),
+    );
     break;
   default:
     console.error("Command not found");
