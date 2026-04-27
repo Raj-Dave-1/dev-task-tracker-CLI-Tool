@@ -1,9 +1,10 @@
 {
+  "type": "module",
   "name": "dev-task-tracker",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,8 +13,13 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/chalk-animation": "^1.6.3",
     "@types/node": "^25.6.0",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "chalk-animation": "^2.0.3",
+    "figlet": "^1.11.0"
   }
 }
