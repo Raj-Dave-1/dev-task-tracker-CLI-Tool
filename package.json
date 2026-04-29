@@ -2,6 +2,9 @@
   "type": "module",
   "name": "dev-task-tracker",
   "version": "1.0.0",
+  "bin": {
+    "mytask": "./bin/index.js"
+  },
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

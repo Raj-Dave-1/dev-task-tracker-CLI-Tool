@@ -2,13 +2,13 @@ import figlet from "figlet";
 import chalkAnimation from "chalk-animation";
 import fs from "fs";
 const args = process.argv.slice(2);
-const command = args[0];
+const command = args[0]?.toLowerCase();
 const taskFile = "tasks.json";
 const buildTask = (task, totalTasks) => {
     return {
         id: totalTasks,
         description: task,
-        status: "todo",
+        status: "to-do",
         createdAt: new Date(),
     };
 };
@@ -53,7 +53,7 @@ switch (command) {
             filteredTasks = allTasks;
         }
         filteredTasks.map((task) => console.log(`${task.id}. ${task.description}` +
-            `${statusFilters.length > 0 || task.status !== "todo" ? ` (${task.status})` : ""}`));
+            `${statusFilters.length > 0 || task.status !== "to-do" ? ` (${task.status})` : ""}`));
         break;
     }
     case "update": {
@@ -104,7 +104,6 @@ switch (command) {
         break;
     }
     case "mark:ip":
-    case "mark:IP":
     case "mark:in-progress": {
         const taskId = args[1];
         if (!taskId) {
@@ -126,8 +125,8 @@ switch (command) {
         break;
     }
     case "mark:td":
-    case "mark:TD":
-    case "mark:todo": {
+    case "mark:todo":
+    case "mark:to-do": {
         const taskId = args[1];
         if (!taskId) {
             const errorMsg = chalkAnimation.rainbow("Task ID is required");
@@ -142,10 +141,29 @@ switch (command) {
             errorMsg.stop();
             process.exit(1);
         }
-        taskToUpdate.status = "todo";
+        taskToUpdate.status = "to-do";
         storeTask(allTasks);
-        console.log(`Task ${taskId} marked as ToDo`);
+        console.log(`Task ${taskId} marked as To-Do`);
         break;
+    }
+    case "mark:done": {
+        const taskId = args[1];
+        if (!taskId) {
+            const errorMsg = chalkAnimation.rainbow("Task Id is required");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            errorMsg.stop();
+            process.exit(1);
+        }
+        const taskToUpdate = allTasks.find((task) => task.id === Number(taskId));
+        if (!taskToUpdate) {
+            const errorMsg = chalkAnimation.rainbow("Task not found");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            errorMsg.stop();
+            process.exit(1);
+        }
+        taskToUpdate.status = "done";
+        storeTask(allTasks);
+        console.log(`Task ${taskId} marked as Done`);
     }
     default:
         console.error("Command not found");
