@@ -3,9 +3,9 @@ import chalkAnimation from "chalk-animation";
 import fs from "fs";
 
 const args = process.argv.slice(2);
-const command = args[0];
+const command = args[0]?.toLowerCase();
 const taskFile = "tasks.json";
-type TaskStatus = "todo" | "in-progress" | "done";
+type TaskStatus = "to-do" | "in-progress" | "done";
 
 interface Task {
   id: number;
@@ -20,9 +20,9 @@ const buildTask = (
   totalTasks: number,
 ): Omit<Task, "updatedAt"> => {
   return {
-    id: totalTasks + 1,
+    id: totalTasks,
     description: task,
-    status: "todo",
+    status: "to-do",
     createdAt: new Date(),
   };
 };
@@ -34,6 +34,10 @@ if (fs.existsSync(taskFile)) {
   allTasks = [];
 }
 
+const storeTask = (tasks: Task[]) => {
+  return fs.writeFileSync(taskFile, JSON.stringify(tasks, null, 2));
+};
+
 switch (command) {
   case undefined:
     const welcomeMsg = await figlet("Welcome !!");
@@ -41,27 +45,25 @@ switch (command) {
     setTimeout(() => rainbow.stop(), 5000); // Stop after 5 seconds
     break;
 
-  case "add":
+  case "add": {
     const taskDescription = args[1];
     if (!taskDescription) {
       // console.log("Task is required");
       const errorMsg = chalkAnimation.rainbow("Task is required");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       errorMsg.stop();
       process.exit(1); // we don't want to continue if task is not provided, and exit 1 indicates an error
     }
-    let listOfTask: Task[] = [];
-    if (fs.existsSync(taskFile)) {
-      listOfTask = JSON.parse(fs.readFileSync(taskFile, "utf8"));
-    }
-    const newTask = buildTask(taskDescription, listOfTask.length || -1);
 
-    listOfTask.push({ ...newTask, updatedAt: newTask.createdAt });
-    fs.writeFileSync(taskFile, JSON.stringify(listOfTask, null, 2));
+    const newTask = buildTask(taskDescription, allTasks.length);
+    allTasks.push({ ...newTask, updatedAt: newTask.createdAt });
 
+    storeTask(allTasks);
     console.log(`Task added successfully (ID: ${newTask.id})`);
     break;
-  case "list":
+  }
+
+  case "list": {
     const statusFilters = args.slice(1);
 
     let filteredTasks: Task[] = [];
@@ -76,15 +78,17 @@ switch (command) {
     filteredTasks.map((task: Task) =>
       console.log(
         `${task.id}. ${task.description}` +
-          `${statusFilters.length > 0 ? ` (${task.status})` : ""}`,
+          `${statusFilters.length > 0 || task.status !== "to-do" ? ` (${task.status})` : ""}`,
       ),
     );
     break;
-  case "update":
+  }
+
+  case "update": {
     const taskId = args[1];
     if (!taskId) {
       const errorMsg = chalkAnimation.rainbow("Task ID is required");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       errorMsg.stop();
       process.exit(1);
     }
@@ -93,7 +97,7 @@ switch (command) {
 
     if (!task) {
       const errorMsg = chalkAnimation.rainbow("Task not found");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       errorMsg.stop();
       process.exit(1);
     }
@@ -101,7 +105,7 @@ switch (command) {
     const updatedTaskDescription = args[2];
     if (!updatedTaskDescription) {
       const errorMsg = chalkAnimation.rainbow("Task description is required");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       errorMsg.stop();
       process.exit(1);
     }
@@ -109,10 +113,116 @@ switch (command) {
     task.description = updatedTaskDescription;
     task.updatedAt = new Date();
 
-    fs.writeFileSync(taskFile, JSON.stringify(allTasks, null, 2));
+    storeTask(allTasks);
 
     console.log(`Task updated successfully (ID: ${taskId})`);
     break;
+  }
+
+  case "delete": {
+    const taskIdToDelete = args[1];
+    if (!taskIdToDelete) {
+      const errorMsg = chalkAnimation.rainbow("Task ID is required");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+    const taskToDelete = allTasks.find(
+      (task: Task) => task.id === Number(taskIdToDelete),
+    );
+    if (!taskToDelete) {
+      const errorMsg = chalkAnimation.rainbow(
+        "Task with given ID does not exists",
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    allTasks = allTasks.filter((task) => task.id !== Number(taskIdToDelete));
+
+    storeTask(allTasks);
+
+    break;
+  }
+
+  case "mark:ip":
+  case "mark:in-progress": {
+    const taskId = args[1];
+    if (!taskId) {
+      const errorMsg = chalkAnimation.rainbow("Task ID is required");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    const taskToUpdate = allTasks.find((task) => task.id === Number(taskId));
+    if (!taskToUpdate) {
+      const errorMsg = chalkAnimation.rainbow("Task with given ID not found");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    taskToUpdate.status = "in-progress";
+
+    storeTask(allTasks);
+
+    console.log(`Task ${taskId} marked as In-Progress`);
+    break;
+  }
+
+  case "mark:td":
+  case "mark:todo":
+  case "mark:to-do": {
+    const taskId = args[1];
+    if (!taskId) {
+      const errorMsg = chalkAnimation.rainbow("Task ID is required");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    const taskToUpdate = allTasks.find((task) => task.id === Number(taskId));
+    if (!taskToUpdate) {
+      const errorMsg = chalkAnimation.rainbow("Task with given ID not found");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    taskToUpdate.status = "to-do";
+
+    storeTask(allTasks);
+
+    console.log(`Task ${taskId} marked as To-Do`);
+    break;
+  }
+
+  case "mark:done": {
+    const taskId = args[1];
+    if (!taskId) {
+      const errorMsg = chalkAnimation.rainbow("Task Id is required");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    const taskToUpdate = allTasks.find((task) => task.id === Number(taskId));
+    if (!taskToUpdate) {
+      const errorMsg = chalkAnimation.rainbow("Task not found");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      errorMsg.stop();
+      process.exit(1);
+    }
+
+    taskToUpdate.status = "done";
+
+    storeTask(allTasks);
+
+    console.log(`Task ${taskId} marked as Done`);
+  }
+
   default:
     console.error("Command not found");
     process.exit(1);

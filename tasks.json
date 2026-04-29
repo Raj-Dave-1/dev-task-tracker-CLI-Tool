@@ -1,30 +1,16 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "description": "task 1",
-    "status": "done",
-    "createdAt": "2026-04-27T08:43:59.303Z",
-    "updatedAt": "2026-04-27T10:18:46.364Z"
-  },
-  {
-    "id": 2,
-    "description": "task 2",
-    "status": "in-progress",
-    "createdAt": "2026-04-27T09:56:50.898Z",
-    "updatedAt": "2026-04-27T10:19:04.707Z"
-  },
-  {
-    "id": 3,
-    "description": "task3",
     "status": "todo",
-    "createdAt": "2026-04-27T09:56:56.606Z",
-    "updatedAt": "2026-04-27T09:56:56.606Z"
+    "createdAt": "2026-04-29T04:22:38.316Z",
+    "updatedAt": "2026-04-29T04:23:33.197Z"
   },
   {
-    "id": 4,
-    "description": "task4",
+    "id": 1,
+    "description": "Task 2",
     "status": "todo",
-    "createdAt": "2026-04-27T10:01:34.789Z",
-    "updatedAt": "2026-04-27T10:01:34.789Z"
+    "createdAt": "2026-04-29T04:22:40.684Z",
+    "updatedAt": "2026-04-29T04:22:40.684Z"
   }
 ]
