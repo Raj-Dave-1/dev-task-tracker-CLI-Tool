@@ -2,19 +2,37 @@
   "type": "module",
   "name": "dev-task-tracker",
   "version": "1.0.1",
+  "description": "A tiny CLI to track your dev tasks, right from your terminal.",
+  "keywords": ["cli", "todo", "tasks", "tracker", "dev-tools", "dev-task-tracker"],
+  "author": "Raj Dave",
+  "license": "ISC",
+  "homepage": "https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool/issues"
+  },
   "bin": {
     "mytask": "./bin/index.js"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "prepublishOnly": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@types/chalk-animation": "^1.6.3",
     "@types/node": "^25.6.0",
