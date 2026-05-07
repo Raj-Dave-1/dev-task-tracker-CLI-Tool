@@ -1,6 +1,7 @@
 import figlet from "figlet";
 import chalkAnimation from "chalk-animation";
 import fs from "fs";
+import chalk from "chalk";
 const args = process.argv.slice(2);
 const command = args[0]?.toLowerCase();
 const taskFile = "tasks.json";
@@ -52,8 +53,21 @@ switch (command) {
         else {
             filteredTasks = allTasks;
         }
-        filteredTasks.map((task) => console.log(`${task.id}. ${task.description}` +
-            `${statusFilters.length > 0 || task.status !== "to-do" ? ` (${task.status})` : ""}`));
+        for (const task of filteredTasks) {
+            if (task.status === "to-do") {
+                console.log(chalk.bold(`${task.id}. ${task.description}`));
+            }
+            else if (task.status === "in-progress") {
+                const inProgressText = `${task.id}. ${task.description}`.padEnd(30, " ") +
+                    ` -  [${task.status.toUpperCase()}]`;
+                console.log(chalk.rgb(255, 165, 0).bold(inProgressText));
+            }
+            else if (task.status === "done") {
+                const doneText = `${task.id}. ${task.description}`.padEnd(30, " ") +
+                    ` -  [${task.status.toUpperCase()}]`;
+                console.log(chalk.green.bold(doneText));
+            }
+        }
         break;
     }
     case "update": {
@@ -100,6 +114,13 @@ switch (command) {
             process.exit(1);
         }
         allTasks = allTasks.filter((task) => task.id !== Number(taskIdToDelete));
+        allTasks = allTasks.map((task, index) => {
+            return {
+                ...task,
+                id: index,
+                updatedAt: new Date(),
+            };
+        });
         storeTask(allTasks);
         break;
     }
@@ -121,29 +142,9 @@ switch (command) {
         }
         taskToUpdate.status = "in-progress";
         storeTask(allTasks);
-        console.log(`Task ${taskId} marked as In-Progress`);
-        break;
-    }
-    case "mark:td":
-    case "mark:todo":
-    case "mark:to-do": {
-        const taskId = args[1];
-        if (!taskId) {
-            const errorMsg = chalkAnimation.rainbow("Task ID is required");
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            errorMsg.stop();
-            process.exit(1);
-        }
-        const taskToUpdate = allTasks.find((task) => task.id === Number(taskId));
-        if (!taskToUpdate) {
-            const errorMsg = chalkAnimation.rainbow("Task with given ID not found");
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            errorMsg.stop();
-            process.exit(1);
-        }
-        taskToUpdate.status = "to-do";
-        storeTask(allTasks);
-        console.log(`Task ${taskId} marked as To-Do`);
+        console.log(chalk
+            .rgb(255, 165, 0)
+            .bold(`[IN-PROGRESS] - ${taskToUpdate.description}`));
         break;
     }
     case "mark:done": {
@@ -163,7 +164,8 @@ switch (command) {
         }
         taskToUpdate.status = "done";
         storeTask(allTasks);
-        console.log(`Task ${taskId} marked as Done`);
+        console.log(chalk.green.bold(`[DONE] - ${taskToUpdate.description}`));
+        break;
     }
     default:
         console.error("Command not found");
