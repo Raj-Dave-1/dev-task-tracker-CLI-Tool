@@ -30,16 +30,15 @@ const storeTask = (tasks) => {
     return fs.writeFileSync(taskFile, JSON.stringify(tasks, null, 2));
 };
 switch (command) {
-    case undefined: {
+    case undefined:
+    case "help": {
         const title = await figlet("mytask", { font: "Standard" });
         const orange = chalk.rgb(255, 165, 0);
-        // Play the rainbow on the title alone. We must let it own the terminal
-        // for its duration — any console.log that fires while it's running will
-        // collide with the animation's cursor redraws and visually erase it.
         const rainbow = chalkAnimation.rainbow(title);
         await new Promise((resolve) => setTimeout(resolve, 1500));
         rainbow.stop();
-        console.log(chalk.gray("  A tiny CLI to track your dev tasks - right from your terminal.\n"));
+        console.log("\n");
+        console.log(chalk.gray("A tiny CLI to track your dev tasks - right from your terminal.\n"));
         const colWidth = 34;
         const cmd = (name) => chalk.cyan.bold(name.padEnd(colWidth, " "));
         const dim = (s) => chalk.gray(s);
@@ -57,9 +56,9 @@ switch (command) {
         console.log(` ${dim("$")} mytask add ${chalk.green('"fix the login bug"')}`);
         console.log(` ${dim("$")} mytask list`);
         console.log(` ${dim("$")} mytask list to-do`);
-        console.log(` ${dim("$")} mytask mark:ip ${dim("3")}\n`);
+        console.log(` ${dim("$")} mytask mark:ip ${dim("3")}`);
         console.log(` ${dim("$")} mytask mark:done ${dim("3")}\n`);
-        console.log(chalk.gray("  ---- Built by Raj Dave - https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool -----\n"));
+        console.log(chalk.gray("  ---- Built by Raj Dave - It's Open Source - https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool -----\n"));
         break;
     }
     case "add": {
@@ -78,7 +77,9 @@ switch (command) {
         break;
     }
     case "list": {
-        const statusFilters = args.slice(1);
+        let statusFilters = args.slice(1);
+        statusFilters = statusFilters.map((status) => status.toLowerCase().trim());
+        statusFilters = statusFilters.map((status) => status == "ip" ? "in-progress" : status);
         let filteredTasks = [];
         if (statusFilters.length > 0) {
             filteredTasks = allTasks.filter((task) => statusFilters.includes(task.status));

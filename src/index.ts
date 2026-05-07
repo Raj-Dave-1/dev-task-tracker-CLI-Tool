@@ -48,7 +48,8 @@ const storeTask = (tasks: Task[]) => {
 };
 
 switch (command) {
-  case undefined: {
+  case undefined:
+  case "help": {
     const title = await figlet("mytask", { font: "Standard" });
     const orange = chalk.rgb(255, 165, 0);
 
