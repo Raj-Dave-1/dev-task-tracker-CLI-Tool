@@ -1,22 +1,22 @@
 [
   {
     "id": 0,
-    "description": "finish this project",
-    "status": "to-do",
+    "description": "install dev-task-tracker",
+    "status": "done",
     "createdAt": "2026-05-06T10:35:03.335Z",
     "updatedAt": "2026-05-06T11:01:17.564Z"
   },
   {
     "id": 1,
-    "description": "finish_dev_task_tracker",
+    "description": "try it like a real developer",
     "status": "in-progress",
     "createdAt": "2026-05-07T09:00:11.849Z",
     "updatedAt": "2026-05-07T09:00:11.849Z"
   },
   {
     "id": 2,
-    "description": "update readme if require",
-    "status": "done",
+    "description": "send feedback, we would love to hear from you",
+    "status": "to-do",
     "createdAt": "2026-05-07T09:12:34.074Z",
     "updatedAt": "2026-05-07T09:12:34.074Z"
   }

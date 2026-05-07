@@ -1,10 +1,16 @@
 import figlet from "figlet";
 import chalkAnimation from "chalk-animation";
 import fs from "fs";
+import path from "path";
+import os from "os";
 import chalk from "chalk";
 const args = process.argv.slice(2);
 const command = args[0]?.toLowerCase();
-const taskFile = "tasks.json";
+const taskDir = path.join(os.homedir(), ".mytask");
+const taskFile = process.env.MYTASK_FILE ?? path.join(taskDir, "tasks.json");
+if (!fs.existsSync(taskDir)) {
+    fs.mkdirSync(taskDir, { recursive: true });
+}
 const buildTask = (task, totalTasks) => {
     return {
         id: totalTasks,
@@ -24,11 +30,38 @@ const storeTask = (tasks) => {
     return fs.writeFileSync(taskFile, JSON.stringify(tasks, null, 2));
 };
 switch (command) {
-    case undefined:
-        const welcomeMsg = await figlet("Welcome !!");
-        const rainbow = chalkAnimation.rainbow(welcomeMsg);
-        setTimeout(() => rainbow.stop(), 5000); // Stop after 5 seconds
+    case undefined: {
+        const title = await figlet("mytask", { font: "Standard" });
+        const orange = chalk.rgb(255, 165, 0);
+        // Play the rainbow on the title alone. We must let it own the terminal
+        // for its duration — any console.log that fires while it's running will
+        // collide with the animation's cursor redraws and visually erase it.
+        const rainbow = chalkAnimation.rainbow(title);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        rainbow.stop();
+        console.log(chalk.gray("  A tiny CLI to track your dev tasks - right from your terminal.\n"));
+        const colWidth = 34;
+        const cmd = (name) => chalk.cyan.bold(name.padEnd(colWidth, " "));
+        const dim = (s) => chalk.gray(s);
+        console.log(chalk.white.bold("USAGE"));
+        console.log(` ${chalk.cyan("mytask")} ${dim("<command> [arguments]")}\n`);
+        console.log(chalk.white.bold("COMMANDS"));
+        console.log(` ${cmd("list [status]")}List tasks (filter by ${dim("to-do")}, ${dim("in-progress")}, ${dim("done")})`);
+        console.log(` ${cmd('add "<description>"')}Add a new task`);
+        console.log(` ${cmd('update <id> "<description>"')}Update a task's description`);
+        console.log(` ${cmd("delete <id>")}Delete a task`);
+        console.log(` ${cmd("mark:ip <id>")}${orange("Mark a task as in-progress")}`);
+        console.log(` ${cmd("mark:in-progress <id>")}${orange("Mark a task as in-progress")}`);
+        console.log(` ${cmd("mark:done <id>")}${chalk.green("Mark a task as done")}\n`);
+        console.log(chalk.white.bold("EXAMPLES"));
+        console.log(` ${dim("$")} mytask add ${chalk.green('"fix the login bug"')}`);
+        console.log(` ${dim("$")} mytask list`);
+        console.log(` ${dim("$")} mytask list to-do`);
+        console.log(` ${dim("$")} mytask mark:ip ${dim("3")}\n`);
+        console.log(` ${dim("$")} mytask mark:done ${dim("3")}\n`);
+        console.log(chalk.gray("  ---- Built by Raj Dave - https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool -----\n"));
         break;
+    }
     case "add": {
         const taskDescription = args[1];
         if (!taskDescription) {
@@ -53,21 +86,23 @@ switch (command) {
         else {
             filteredTasks = allTasks;
         }
+        console.log("\n");
         for (const task of filteredTasks) {
             if (task.status === "to-do") {
                 console.log(chalk.bold(`${task.id}. ${task.description}`));
             }
             else if (task.status === "in-progress") {
-                const inProgressText = `${task.id}. ${task.description}`.padEnd(30, " ") +
+                const inProgressText = `${task.id}. ${task.description}`.padEnd(50, " ") +
                     ` -  [${task.status.toUpperCase()}]`;
                 console.log(chalk.rgb(255, 165, 0).bold(inProgressText));
             }
             else if (task.status === "done") {
-                const doneText = `${task.id}. ${task.description}`.padEnd(30, " ") +
+                const doneText = `${task.id}. ${task.description}`.padEnd(50, " ") +
                     ` -  [${task.status.toUpperCase()}]`;
                 console.log(chalk.green.bold(doneText));
             }
         }
+        console.log("\n");
         break;
     }
     case "update": {
