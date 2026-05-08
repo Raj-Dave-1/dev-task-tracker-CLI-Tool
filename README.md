@@ -10,6 +10,7 @@ Tasks are stored in `~/.mytask/tasks.json`, so the same task list is available n
 > Built by **[Raj Dave](https://www.linkedin.com/in/raj-dave-03-rh/)** · [GitHub](https://github.com/Raj-Dave-1) · [LinkedIn](https://www.linkedin.com/in/raj-dave-03-rh/)
 
 
+
 <img width="749" height="535" alt="image" src="https://github.com/user-attachments/assets/21d690b1-3e20-4ebd-8602-f488d1000798" />
 
 
