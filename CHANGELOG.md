@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool/compare/v1.1.5...v1.1.6) (2026-05-08)
+
+
+### Bug Fixes
+
+* update readme ([603e06a](https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool/commit/603e06adaf2798791f3683c8722ffdabf1518b1c))
+
 ## [1.1.5](https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool/compare/v1.1.4...v1.1.5) (2026-05-08)
 
 
