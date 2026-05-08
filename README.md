@@ -140,6 +140,20 @@ npm link
 
 Source lives in `src/index.ts`. It's a single file at the moment - pretty minimal on purpose.
 
+## Releases
+
+Releases to npm are fully automated. Every push to `main` triggers a GitHub Actions workflow that runs [semantic-release](https://semantic-release.gitbook.io/), which:
+
+- reads the commit messages since the last release,
+- decides the next version (patch / minor / major) based on [Conventional Commits](https://www.conventionalcommits.org/),
+- updates `CHANGELOG.md` and `package.json`,
+- publishes the new version to [npm](https://www.npmjs.com/package/dev-task-tracker),
+- and cuts a matching [GitHub Release](https://github.com/Raj-Dave-1/dev-task-tracker-CLI-Tool/releases) with auto-generated notes.
+
+In short: I don't run `npm publish` by hand. I just write commits like `feat: add search command` or `fix: handle empty task list`, merge to `main`, and the rest happens on its own.
+
+The pipeline lives in [`.github/workflows/release.yml`](./.github/workflows/release.yml), and the release config in [`.releaserc.json`](./.releaserc.json).
+
 ## Roadmap
 
 Things I might add later:
