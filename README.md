@@ -2,7 +2,7 @@
 
 A tiny CLI to track your dev tasks, right from your terminal.
 
-I built this because small TODOs kept getting scattered across sticky notes, random text files, and forgotten Slack messages to myself. Now they all live in one place — locally, no accounts, no cloud, no nonsense.
+I built this because small TODOs kept getting scattered across sticky notes, random text files, and forgotten Slack messages to myself. Now they all live in one place - locally, no accounts, no cloud, no nonsense.
 
 Tasks are stored in `~/.mytask/tasks.json`, so the same task list is available no matter which directory you run the command from.
 
@@ -134,7 +134,7 @@ npm run build
 npm link
 ```
 
-Source lives in `src/index.ts`. It's a single file at the moment — pretty minimal on purpose.
+Source lives in `src/index.ts`. It's a single file at the moment - pretty minimal on purpose.
 
 ## Roadmap
 
@@ -162,4 +162,4 @@ Feel free to reach out for feedback, bug reports, or just to say hi.
 
 ## License
 
-ISC — see [package.json](./package.json) for details.
+ISC - see [package.json](./package.json) for details.
