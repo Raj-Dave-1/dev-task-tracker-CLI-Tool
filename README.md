@@ -1,5 +1,7 @@
 # dev-task-tracker
 
+[Published on NPM](https://www.npmjs.com/package/dev-task-tracker)
+
 A tiny CLI to track your dev tasks, right from your terminal.
 
 I built this because small TODOs kept getting scattered across sticky notes, random text files, and forgotten Slack messages to myself. Now they all live in one place - locally, no accounts, no cloud, no nonsense.
